@@ -1,6 +1,7 @@
 package com.picpaySimplificado.picpaySimplificado.Domain;
 
 import com.picpaySimplificado.picpaySimplificado.Enum.UserType;
+import com.picpaySimplificado.picpaySimplificado.Exceptions.InvalidTransferAmountException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,22 @@ public class User {
         this.balance = balance;
         validEmail(email);
         this.userType = userType;
+    }
+
+    public void recieverTransfer(BigDecimal value){
+        if (value.compareTo(BigDecimal.ZERO) <= 0){
+            throw new InvalidTransferAmountException("ERRO! valor de transferência inválido.");
+        }
+
+        this.balance = balance.add(value);
+    }
+
+    public void senderTransfer(BigDecimal value){
+        if (value.compareTo(BigDecimal.ZERO) <= 0){
+            throw new InvalidTransferAmountException("ERRO! valor de transferência inválido.");
+        }
+
+        this.balance = balance.subtract(value);
     }
 
     private void validEmail(String email){
