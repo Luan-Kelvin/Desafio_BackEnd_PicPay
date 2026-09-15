@@ -6,7 +6,6 @@ import com.picpaySimplificado.picpaySimplificado.DTOs.TransactionPostDTO;
 import com.picpaySimplificado.picpaySimplificado.DTOs.TransactionGetDTO;
 import com.picpaySimplificado.picpaySimplificado.Domain.Transaction;
 import com.picpaySimplificado.picpaySimplificado.Domain.User;
-import com.picpaySimplificado.picpaySimplificado.Exceptions.UnauthorizedTransitionException;
 import com.picpaySimplificado.picpaySimplificado.Respository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
