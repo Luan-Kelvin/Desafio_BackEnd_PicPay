@@ -1,4 +1,4 @@
-package Services;
+package com.picpaySimplificado.picpaySimplificado.Services;
 
 import com.picpaySimplificado.picpaySimplificado.Domain.User;
 import com.picpaySimplificado.picpaySimplificado.Enum.UserType;
