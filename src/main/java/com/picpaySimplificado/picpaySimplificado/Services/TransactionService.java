@@ -1,7 +1,9 @@
 package com.picpaySimplificado.picpaySimplificado.Services;
 
+import com.picpaySimplificado.picpaySimplificado.Conversor.Conversor;
 import com.picpaySimplificado.picpaySimplificado.DTOs.ResponseDTO;
-import com.picpaySimplificado.picpaySimplificado.DTOs.TransactionDto;
+import com.picpaySimplificado.picpaySimplificado.DTOs.TransactionPostDTO;
+import com.picpaySimplificado.picpaySimplificado.DTOs.TransactionGetDTO;
 import com.picpaySimplificado.picpaySimplificado.Domain.Transaction;
 import com.picpaySimplificado.picpaySimplificado.Domain.User;
 import com.picpaySimplificado.picpaySimplificado.Exceptions.UnauthorizedTransitionException;
@@ -15,6 +17,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,15 +29,13 @@ public class TransactionService {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public void createTransaction(TransactionDto transaction) throws IOException, InterruptedException {
+    private final Conversor conversor;
+
+    public TransactionGetDTO createTransaction(TransactionPostDTO transaction){
         User sender = userService.findById(transaction.senderId());
         User reciever = userService.findById(transaction.recieverId());
 
         userService.validateTransaction(sender, transaction.value());
-
-        if (!autorizeTransaction()){
-            throw new UnauthorizedTransitionException("ERRO! Transição não autorizada");
-        }
 
         Transaction transaction1 = new Transaction(transaction.value(), sender, reciever);
         transactionRepository.save(transaction1);
@@ -45,6 +46,14 @@ public class TransactionService {
         userService.saveUser(sender);
         userService.saveUser(reciever);
 
+        return conversor.converterTransaction(transaction1);
+
+    }
+
+    public List<TransactionGetDTO> listTransactions(){
+        List<Transaction> transactions = transactionRepository.findAll();
+
+        return transactions.stream().map(conversor::converterTransaction).toList();
     }
 
 
