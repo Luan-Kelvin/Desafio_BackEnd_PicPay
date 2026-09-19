@@ -39,7 +39,7 @@ public class UserIntegrationTest {
     void deveCriarUsuarioERetornarDTO() throws Exception {
         String json = """
                 {
-                    "firsName": "Joaquim",
+                    "firstName": "Joaquim",
                     "lastName": "Freitas",
                     "document": "123.456.789-20",
                     "password": "12345",

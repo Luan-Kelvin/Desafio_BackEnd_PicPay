@@ -32,7 +32,7 @@ public class UserService {
             throw new UserAlreadyExistsException(String.format("ERRO! usuário com documento %s já existe.", dto.document()));
         }
 
-        User user = new User(dto.firsName(), dto.lastName(), dto.document(), dto.password(), dto.balance(), dto.email(), dto.type());
+        User user = new User(dto.firstName(), dto.lastName(), dto.document(), dto.password(), dto.balance(), dto.email(), dto.type());
         userRepository.save(user);
 
         return conversor.converterUser(user);

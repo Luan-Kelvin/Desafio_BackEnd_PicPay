@@ -67,7 +67,7 @@ public class UserServiceTest {
         User user = captor.getValue();
 
         assertEquals(postDto.document(), user.getDocument());
-        assertEquals(postDto.firsName(), user.getFirstName());
+        assertEquals(postDto.firstName(), user.getFirstName());
         assertEquals(postDto.lastName(), user.getLastName());
         assertEquals(postDto.type(), user.getUserType());
         assertEquals(postDto.email(), user.getEmail());

@@ -1,4 +1,4 @@
-package com.picpaySimplificado.picpaySimplificado.Controller;
+package com.picpaySimplificado.picpaySimplificado.Controller.Transaction;
 
 import com.picpaySimplificado.picpaySimplificado.Controllers.TransactionController.Get.TransactionControllerGet;
 import com.picpaySimplificado.picpaySimplificado.DTOs.TransactionGetDTO;

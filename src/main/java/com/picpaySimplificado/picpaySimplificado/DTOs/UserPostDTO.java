@@ -5,7 +5,7 @@ import com.picpaySimplificado.picpaySimplificado.Enum.UserType;
 import java.math.BigDecimal;
 
 public record UserPostDTO(
-        String firsName,
+        String firstName,
         String lastName,
         String document,
         String password,
