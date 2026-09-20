@@ -2,6 +2,7 @@ package com.picpaySimplificado.picpaySimplificado.Service.User;
 
 
 import com.picpaySimplificado.picpaySimplificado.Conversor.Conversor;
+import com.picpaySimplificado.picpaySimplificado.DTOs.DepositDTO;
 import com.picpaySimplificado.picpaySimplificado.DTOs.UserGetDTO;
 import com.picpaySimplificado.picpaySimplificado.DTOs.UserPostDTO;
 import com.picpaySimplificado.picpaySimplificado.Domain.User;
@@ -9,6 +10,7 @@ import com.picpaySimplificado.picpaySimplificado.Enum.UserType;
 import com.picpaySimplificado.picpaySimplificado.Exceptions.InsufficientFundsForTransactionException;
 import com.picpaySimplificado.picpaySimplificado.Exceptions.InvalidUserTypeException;
 import com.picpaySimplificado.picpaySimplificado.Exceptions.UserAlreadyExistsException;
+import com.picpaySimplificado.picpaySimplificado.Exceptions.UserNotFoundException;
 import com.picpaySimplificado.picpaySimplificado.Respository.UserRepository;
 import com.picpaySimplificado.picpaySimplificado.Services.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -48,12 +50,11 @@ public class UserServiceTest {
                 "Da Silva",
                 "123.456.789-10",
                 "12345",
-                BigDecimal.valueOf(500),
                 "Joaquim@Gmail.com",
                 UserType.COMMON
         );
 
-        UserGetDTO dtoGet = new UserGetDTO(1L, "Joaquim Freitas", "Da Silva", "Joaquim@Gmail.com", UserType.COMMON);
+        UserGetDTO dtoGet = new UserGetDTO(1L, "Joaquim Freitas", "Da Silva",BigDecimal.ZERO, "Joaquim@Gmail.com", UserType.COMMON);
 
         when(userRepository.findByDocument(postDto.document())).thenReturn(Optional.empty());
         when(conversor.converterUser(any(User.class))).thenReturn(dtoGet);
@@ -72,7 +73,6 @@ public class UserServiceTest {
         assertEquals(postDto.type(), user.getUserType());
         assertEquals(postDto.email(), user.getEmail());
         assertEquals(postDto.password(), user.getPassword());
-        assertEquals(postDto.balance(), user.getBalance());
         assertEquals(user.getFirstName(), getDTO.firsName());
         assertEquals(user.getLastName(), getDTO.lastName());
         assertEquals(user.getEmail(), getDTO.email());
@@ -89,7 +89,6 @@ public class UserServiceTest {
                 "Da Silva",
                 "123.456.789-10",
                 "12345",
-                BigDecimal.valueOf(500),
                 "Joaquim@Gmail.com",
                 UserType.COMMON
         );
@@ -107,11 +106,11 @@ public class UserServiceTest {
     @Test
     @DisplayName("Deve retornar um lista de usuarios")
     void deveRetornarListaDeUsuario() {
-        User user1 = new User("Joaquim", "Pereira", "123.456.789-20", "12345", BigDecimal.valueOf(500), "Jojo@gmail.com", UserType.COMMON);
-        User user2 = new User("Francisco", "Leandro", "122.456.789-20", "12345", BigDecimal.valueOf(500), "vano@gmail.com", UserType.COMMON);
+        User user1 = new User("Joaquim", "Pereira", "123.456.789-20", "12345","Jojo@gmail.com", UserType.COMMON);
+        User user2 = new User("Francisco", "Leandro", "122.456.789-20", "12345",  "vano@gmail.com", UserType.COMMON);
 
-        UserGetDTO dtoGet1 = new UserGetDTO(1L, "Joaquim", "Pereira", "Jojo@gmail.com", UserType.COMMON);
-        UserGetDTO dtoGet2 = new UserGetDTO(2L, "Francisco", "Leandro", "vano@gmail.com", UserType.COMMON);
+        UserGetDTO dtoGet1 = new UserGetDTO(1L, "Joaquim", "Pereira", BigDecimal.ZERO, "Jojo@gmail.com", UserType.COMMON);
+        UserGetDTO dtoGet2 = new UserGetDTO(2L, "Francisco", "Leandro", BigDecimal.ZERO, "vano@gmail.com", UserType.COMMON);
 
         List<User> users = List.of(user1, user2);
 
@@ -136,7 +135,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("Deve lançar exceção se usuário nao tiver saldo para transferência")
     void deveLancarExcecaoSeUsuarioEstiverSemSaldoParaTransferencia(){
-        User user = new User("Leandro", "martins", "123.456.789-10", "12345", BigDecimal.valueOf(200), "jogger@gmail.com", UserType.COMMON);
+        User user = new User("Leandro", "martins", "123.456.789-10", "12345","jogger@gmail.com", UserType.COMMON);
 
         assertThrows(InsufficientFundsForTransactionException.class, () -> userService.validateTransaction(user, BigDecimal.valueOf(400)));
     }
@@ -144,9 +143,52 @@ public class UserServiceTest {
     @Test
     @DisplayName("Deve lançar exceção se tipo de usuario for diferente de COMMON")
     void deveLancarExcecaoSeUsuarioNaoForCommon(){
-        User user = new User("Leandro", "martins", "123.456.789-10", "12345", BigDecimal.valueOf(500), "jogger@gmail.com", UserType.SHOPKEEPER);
+        User user = new User("Leandro", "martins", "123.456.789-10", "12345", "jogger@gmail.com", UserType.SHOPKEEPER);
 
         assertThrows(InvalidUserTypeException.class, () -> userService.validateTransaction(user, BigDecimal.valueOf(200)));
+    }
+
+    @Test
+    @DisplayName("Deve realizar o deposito na conta do usuário selecionado.")
+    void deveDepositar(){
+        DepositDTO depositDTO = new DepositDTO("123.456.789-10", BigDecimal.valueOf(400));
+
+        User user = new User(
+                "Joaquim",
+                "Pereira",
+                "123.456.789-10",
+                "12345",
+                "Joaquim@gmail.com",
+                UserType.COMMON
+        );
+
+        when(userRepository.findByDocument(depositDTO.document())).thenReturn(Optional.of(user));
+
+        UserGetDTO userGetDTO = userService.deposit(depositDTO);
+
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+
+        verify(userRepository).save(captor.capture());
+
+        User userSave = captor.getValue();
+
+        assertEquals(0, userSave.getBalance().compareTo(BigDecimal.valueOf(400)));
+
+        verify(userRepository).findByDocument(depositDTO.document());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção se usuário não existir")
+    void deveLancarExcecaoSeusuarionaoExistirParaDeposito(){
+        DepositDTO depositDTO = new DepositDTO("123.456.789-10", BigDecimal.valueOf(400));
+
+        when(userRepository.findByDocument(depositDTO.document())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.deposit(depositDTO));
+
+        verify(userRepository).findByDocument(depositDTO.document());
+        verifyNoInteractions(conversor);
+        verify(userRepository, never()).save(any(User.class));
     }
 
 

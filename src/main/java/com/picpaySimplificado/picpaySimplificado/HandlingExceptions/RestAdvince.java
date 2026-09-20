@@ -73,4 +73,16 @@ public class RestAdvince {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
+    @ExceptionHandler(InvalidDepositoAmountException.class)
+    public ResponseEntity<ErroRequest> invalidDeposit(InvalidDepositoAmountException e, HttpServletRequest request){
+        ErroRequest erro = new ErroRequest(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
 }

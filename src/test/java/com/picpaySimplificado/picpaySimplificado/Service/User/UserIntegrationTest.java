@@ -43,7 +43,6 @@ public class UserIntegrationTest {
                     "lastName": "Freitas",
                     "document": "123.456.789-20",
                     "password": "12345",
-                    "balance": 500,
                     "email": "Jojo@gmail.com",
                     "type": "COMMON"
                 }

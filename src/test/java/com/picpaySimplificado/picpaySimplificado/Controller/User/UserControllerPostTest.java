@@ -14,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,7 +39,6 @@ public class UserControllerPostTest {
                     "lastName": "Golveia",
                     "document": "123.456.789-10",
                     "password": "12345",
-                    "balance": 500,
                     "email": "joaquim@gmail.com",
                     "type": "COMMON"
                 }
@@ -47,6 +48,7 @@ public class UserControllerPostTest {
                 1L,
                 "Joaquim",
                 "Golveia",
+                BigDecimal.ZERO,
                 "joaquim@gmail.com",
                 UserType.COMMON
         );
@@ -71,7 +73,6 @@ public class UserControllerPostTest {
                     "lastName": "Golveia",
                     "document": "123.456.789-10",
                     "password": "12345",
-                    "balance": 500,
                     "email": "joaquim@gmail.com",
                     "type": "COMMON"
                 }

@@ -54,20 +54,20 @@ public class TransactionIntegrationTest {
                 "Felipe",
                 "123.456.789-10",
                 "12345",
-                BigDecimal.valueOf(800),
                 "Jojo@gmail.com",
                 UserType.COMMON
         );
+        sender.deposit(BigDecimal.valueOf(800));
 
         User recieve = new User(
                 "Márcio",
                 "Manoel",
                 "325.555.987-10",
                 "25456",
-                BigDecimal.valueOf(600),
                 "Mama@gmail.com",
                 UserType.COMMON
         );
+        recieve.deposit(BigDecimal.valueOf(600));
 
         userRepository.save(sender);
         userRepository.save(recieve);
@@ -93,11 +93,11 @@ public class TransactionIntegrationTest {
         User recieverUser = userRepository.findByDocument("325.555.987-10").orElseThrow();
 
         assertEquals(senderUser.getId(), transaction.getSender().getId());
-        assertEquals(recieverUser.getId(), transaction.getReciever().getId());
+        assertEquals(recieverUser.getId(), transaction.getReceiver().getId());
         assertEquals(getDto.id(), transaction.getId());
         assertEquals(0, getDto.value().compareTo(transaction.getAmount()));
         assertEquals(getDto.idSender(), transaction.getSender().getId());
-        assertEquals(getDto.idReciever(), transaction.getReciever().getId());
+        assertEquals(getDto.idReciever(), transaction.getReceiver().getId());
         assertEquals(0, BigDecimal.valueOf(600).compareTo(senderUser.getBalance()));
         assertEquals(0, BigDecimal.valueOf(800).compareTo(recieverUser.getBalance()));
     }

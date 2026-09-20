@@ -1,6 +1,7 @@
 package com.picpaySimplificado.picpaySimplificado.Services;
 
 import com.picpaySimplificado.picpaySimplificado.Conversor.Conversor;
+import com.picpaySimplificado.picpaySimplificado.DTOs.DepositDTO;
 import com.picpaySimplificado.picpaySimplificado.DTOs.UserGetDTO;
 import com.picpaySimplificado.picpaySimplificado.DTOs.UserPostDTO;
 import com.picpaySimplificado.picpaySimplificado.Domain.User;
@@ -32,7 +33,7 @@ public class UserService {
             throw new UserAlreadyExistsException(String.format("ERRO! usuário com documento %s já existe.", dto.document()));
         }
 
-        User user = new User(dto.firstName(), dto.lastName(), dto.document(), dto.password(), dto.balance(), dto.email(), dto.type());
+        User user = new User(dto.firstName(), dto.lastName(), dto.document(), dto.password(), dto.email(), dto.type());
         userRepository.save(user);
 
         return conversor.converterUser(user);
@@ -43,6 +44,16 @@ public class UserService {
         List<User> users = userRepository.findAll();
 
         return users.stream().map(conversor::converterUser).toList();
+    }
+
+    public UserGetDTO deposit(DepositDTO dto){
+        User user = userRepository.findByDocument(dto.document())
+                .orElseThrow(() -> new UserNotFoundException(String.format("ERRO! Usuário com documento: %s não encontrado.", dto.document())));
+
+        user.deposit(dto.value());
+        userRepository.save(user);
+
+        return conversor.converterUser(user);
     }
 
     public void validateTransaction(User user, BigDecimal value) {

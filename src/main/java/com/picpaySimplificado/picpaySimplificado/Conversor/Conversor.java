@@ -14,6 +14,7 @@ public class Conversor {
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
+                user.getBalance(),
                 user.getEmail(),
                 user.getUserType()
         );
@@ -24,10 +25,10 @@ public class Conversor {
                 transaction.getId(),
                 transaction.getSender().getId(),
                 transaction.getSender().getFirstName(),
-                transaction.getReciever().getId(),
-                transaction.getReciever().getFirstName(),
+                transaction.getReceiver().getId(),
+                transaction.getReceiver().getFirstName(),
                 transaction.getAmount(),
-                transaction.getTimesTamp()
+                transaction.getTimestamp()
         );
     }
 }

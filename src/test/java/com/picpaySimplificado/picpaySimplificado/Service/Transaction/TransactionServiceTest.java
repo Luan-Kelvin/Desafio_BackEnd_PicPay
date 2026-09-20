@@ -48,7 +48,6 @@ public class TransactionServiceTest {
                 "Felipe",
                 "123.456.789-10",
                 "12345",
-                BigDecimal.valueOf(800),
                 "Jojo@gmail.com",
                 UserType.COMMON
         );
@@ -58,7 +57,6 @@ public class TransactionServiceTest {
                 "Manoel",
                 "325.555.987-10",
                 "25456",
-                BigDecimal.valueOf(600),
                 "Mama@gmail.com",
                 UserType.COMMON
         );
@@ -92,7 +90,7 @@ public class TransactionServiceTest {
 
         assertEquals(postDto.value(), transactionSave.getAmount());
         assertEquals(transactionSave.getSender().getId(), transactionGetDTO.idSender());
-        assertEquals(transactionSave.getReciever().getId(), transactionGetDTO.idReciever());
+        assertEquals(transactionSave.getReceiver().getId(), transactionGetDTO.idReciever());
         assertEquals(transactionSave.getAmount(), transactionGetDTO.value());
 
         verify(userService).findById(eq(postDto.senderId()));

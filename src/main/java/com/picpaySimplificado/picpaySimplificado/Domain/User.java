@@ -1,6 +1,8 @@
 package com.picpaySimplificado.picpaySimplificado.Domain;
 
 import com.picpaySimplificado.picpaySimplificado.Enum.UserType;
+import com.picpaySimplificado.picpaySimplificado.Exceptions.InsufficientFundsForTransactionException;
+import com.picpaySimplificado.picpaySimplificado.Exceptions.InvalidDepositoAmountException;
 import com.picpaySimplificado.picpaySimplificado.Exceptions.InvalidTransferAmountException;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -35,14 +37,22 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    public User(String firstName, String lastName, String document, String password, BigDecimal balance, String email, UserType userType) {
+    public User(String firstName, String lastName, String document, String password, String email, UserType userType) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.document = document;
         this.password = password;
-        this.balance = balance;
         validEmail(email);
         this.userType = userType;
+        this.balance = BigDecimal.ZERO;
+    }
+
+    public void deposit(BigDecimal value){
+        if (value.compareTo(BigDecimal.valueOf(99)) <= 0){
+            throw new InvalidDepositoAmountException("ERRO! valor mínimo para depósito: R$100,00");
+        }
+
+         this.balance = balance.add(value);
     }
 
     public void recieverTransfer(BigDecimal value){
@@ -56,6 +66,10 @@ public class User {
     public void senderTransfer(BigDecimal value){
         if (value.compareTo(BigDecimal.ZERO) <= 0){
             throw new InvalidTransferAmountException("ERRO! valor de transferência inválido.");
+        }
+
+        if (value.compareTo(this.balance) < 0){
+            throw new InsufficientFundsForTransactionException("ERRO! saldo insuficiente para transferência.");
         }
 
         this.balance = balance.subtract(value);
