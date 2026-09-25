@@ -1,11 +1,13 @@
 package com.picpaySimplificado.picpaySimplificado.Controllers.UserController.Get;
 
+import com.picpaySimplificado.picpaySimplificado.DTOs.UserFindByDocumentDTO;
 import com.picpaySimplificado.picpaySimplificado.DTOs.UserGetDTO;
 import com.picpaySimplificado.picpaySimplificado.Services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,5 +23,10 @@ public class UserControllerGet {
     @GetMapping
     public ResponseEntity<List<UserGetDTO>> listUsers(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.listUsers());
+    }
+
+    @GetMapping("/document/{document}")
+    public ResponseEntity<UserFindByDocumentDTO> findByDocument(@PathVariable("document") String document){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findByDocument(document));
     }
 }

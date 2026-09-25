@@ -1,6 +1,7 @@
 package com.picpaySimplificado.picpaySimplificado.Conversor;
 
 import com.picpaySimplificado.picpaySimplificado.DTOs.TransactionGetDTO;
+import com.picpaySimplificado.picpaySimplificado.DTOs.UserFindByDocumentDTO;
 import com.picpaySimplificado.picpaySimplificado.DTOs.UserGetDTO;
 import com.picpaySimplificado.picpaySimplificado.Domain.Transaction;
 import com.picpaySimplificado.picpaySimplificado.Domain.User;
@@ -20,6 +21,19 @@ public class Conversor {
         );
     }
 
+    public UserFindByDocumentDTO converterUserAndDocument(User user){
+        return new UserFindByDocumentDTO(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getDocument(),
+                user.getBalance(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getUserType()
+        );
+    }
+
     public TransactionGetDTO converterTransaction(Transaction transaction){
         return new TransactionGetDTO(
                 transaction.getId(),
@@ -31,4 +45,5 @@ public class Conversor {
                 transaction.getTimestamp()
         );
     }
+
 }

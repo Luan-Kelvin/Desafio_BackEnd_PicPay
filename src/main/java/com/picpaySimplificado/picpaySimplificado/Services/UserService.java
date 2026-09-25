@@ -2,6 +2,7 @@ package com.picpaySimplificado.picpaySimplificado.Services;
 
 import com.picpaySimplificado.picpaySimplificado.Conversor.Conversor;
 import com.picpaySimplificado.picpaySimplificado.DTOs.DepositDTO;
+import com.picpaySimplificado.picpaySimplificado.DTOs.UserFindByDocumentDTO;
 import com.picpaySimplificado.picpaySimplificado.DTOs.UserGetDTO;
 import com.picpaySimplificado.picpaySimplificado.DTOs.UserPostDTO;
 import com.picpaySimplificado.picpaySimplificado.Domain.User;
@@ -68,6 +69,13 @@ public class UserService {
 
     public User findById(Long id){
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Erro! Usuário não encontrado."));
+    }
+
+    public UserFindByDocumentDTO findByDocument(String document){
+        User user = userRepository.findByDocument(document)
+                .orElseThrow(() -> new UserNotFoundException(String.format("ERRO! Usuário com documento Nº %s não foi encontrado.", document)));
+
+        return conversor.converterUserAndDocument(user);
     }
 
     public void saveUser(User user){
